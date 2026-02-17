@@ -1,0 +1,11 @@
+# ClangD
+.cache/
+compile_commands.json
+build_clang/
+
+# sublime
+*.sublime-*
+
+# game files
+build/
+
