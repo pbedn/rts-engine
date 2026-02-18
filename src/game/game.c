@@ -22,6 +22,17 @@ void Game_Init(GameState* game)
     // Create single test unit in middle of map
     Unit_Init(&game->player_unit, 5, 5);
 
+    // Just for testing, injecting path manually
+    game->player_unit.movement.tiles[0][0] = 5;
+    game->player_unit.movement.tiles[0][1] = 3;
+
+    game->player_unit.movement.tiles[1][0] = 6;
+    game->player_unit.movement.tiles[1][1] = 3;
+
+    game->player_unit.movement.count = 2;
+    game->player_unit.movement.current_index = 0;
+
+
     game->time = 0.0f;
 }
 

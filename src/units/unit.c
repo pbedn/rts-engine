@@ -24,8 +24,11 @@ void Unit_Init(Unit* unit, int tx, int ty)
     unit->target_tx = tx;
     unit->target_ty = ty;
 
-    unit->speed = 150.0f;   // Pixels per second
-    unit->moving = 0;
+    unit->speed = 100.0f;   // Pixels per second
+    unit->moving = false;
+
+    unit->movement.count = 0;
+    unit->movement.current_index = 0;
 }
 
 void Unit_SetTarget(Unit* unit, int tx, int ty)
@@ -34,14 +37,15 @@ void Unit_SetTarget(Unit* unit, int tx, int ty)
     unit->target_tx = tx;
     unit->target_ty = ty;
 
-    unit->moving = 1;
+    unit->moving = true;
 }
 
 void Unit_Update(Unit* unit, float dt)
 {
     if (!unit->moving)
-        return;
+        Unit_StartNextStep(unit);
 
+    // if moving, interpolate toward target tile
     Vector2 target = Map_TileToWorld(unit->target_tx, unit->target_ty);
 
     float dx = target.x - unit->wx;
@@ -49,24 +53,53 @@ void Unit_Update(Unit* unit, float dt)
 
     float dist = sqrtf(dx * dx + dy * dy);
 
-    // If close enough → snap and finish movement
-    if (dist < 1.0f)
+
+    if (dist > 0.0f)
     {
-        unit->wx = target.x;
-        unit->wy = target.y;
+        float step = unit->speed * dt;
 
-        unit->tx = unit->target_tx;
-        unit->ty = unit->target_ty;
+        if (step >= dist)
+        {
+            // Snap to target
+            unit->wx = target.x;
+            unit->wy = target.y;
 
-        unit->moving = 0;
-        return;
+            // Commit tile position
+            unit->tx = unit->target_tx;
+            unit->ty = unit->target_ty;
+
+            unit->moving = false;
+
+            // Advance movement queue
+            unit->movement.current_index++;
+        }
+        else
+        {
+            // Normalize direction
+            float dir_x = dx / dist;
+            float dir_y = dy / dist;
+
+            // Move toward target using frame time
+            unit->wx += dir_x * step;
+            unit->wy += dir_y * step;
+        }
     }
+}
 
-    // Normalize direction
-    float dir_x = dx / dist;
-    float dir_y = dy / dist;
+// Starts movement toward the next tile in the queue if available
+// Returns true if movement started, false otherwise
+static bool Unit_StartNextStep(Unit* unit)
+{
+    if (unit->movement.current_index >= unit->movement.count)
+        return false;
 
-    // Move toward target using frame time
-    unit->wx += dir_x * unit->speed * dt;
-    unit->wy += dir_y * unit->speed * dt;
+    int next_tx = unit->movement.tiles[unit->movement.current_index][0];
+    int next_ty = unit->movement.tiles[unit->movement.current_index][1];
+
+    unit->target_tx = next_tx;
+    unit->target_ty = next_ty;
+
+    unit->moving = true;
+
+    return true;
 }
