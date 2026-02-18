@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "game/game.h"
 #include "raylib.h"
+#include "palette.h"
 
 /*
     Entry point.
@@ -26,9 +27,9 @@ int main(void)
     SetConfigFlags(FLAG_WINDOW_HIGHDPI | FLAG_VSYNC_HINT);
 
     InitWindow(screenWidth, screenHeight, "RTS Project");
-    printf("Window: %d x %d\n", GetScreenWidth(), GetScreenHeight());
-    printf("Render: %d x %d\n", GetRenderWidth(), GetRenderHeight());
-    printf("Monitor: %d x %d\n", GetMonitorWidth(0), GetMonitorHeight(0));
+    // printf("Window: %d x %d\n", GetScreenWidth(), GetScreenHeight());
+    // printf("Render: %d x %d\n", GetRenderWidth(), GetRenderHeight());
+    // printf("Monitor: %d x %d\n", GetMonitorWidth(0), GetMonitorHeight(0));
 
     // Entire simulation state lives here.
     GameState game;
@@ -44,7 +45,7 @@ int main(void)
         Game_Update(&game, dt);
 
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+        ClearBackground(PALETTE_BACKGROUND);
         
         Game_Render(&game);
         
