@@ -1,6 +1,7 @@
-#include "input.h"
 #include "raylib.h"
-#include <stdlib.h>
+#include "input.h"
+#include "../core/command.h"
+
 
 /*
     Input module interprets user intent.
@@ -22,18 +23,7 @@ void Input_Process(GameState *game)
         int tx = (int)tile.x;
         int ty = (int)tile.y;
 
-        if (!Map_IsInside(&game->map, tx, ty))
-            return;
+        Command_MoveUnit(&game->player_unit, &game->map, tx, ty);
 
-        Unit* unit = &game->player_unit;
-
-        int dx = abs(tx - unit->tx);
-        int dy = abs(ty - unit->ty);
-
-        // Adjacent rule (Manhattan distance = 1)
-        if (dx + dy == 1 && !unit->moving)
-        {
-            Unit_SetTarget(unit, tx, ty);
-        }
     }
 }

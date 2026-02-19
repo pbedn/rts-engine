@@ -1,5 +1,7 @@
 #include "unit.h"
+#include "map.h"
 #include <math.h>
+#include <stdbool.h>
 
 /*
     Unit is a small state machine.
@@ -11,10 +13,12 @@
     This allows smooth movement while logic remains grid-based.
 */
 
-void Unit_Init(Unit *unit, int tx, int ty)
+void Unit_Init(Unit *unit, Map *map, int tx, int ty)
 {
     unit->tx = tx;
     unit->ty = ty;
+
+    Map_SetOccupied(map, tx, ty, true);
 
     // Start world position aligned with tile
     unit->wx = tx * TILE_SIZE;
@@ -24,23 +28,14 @@ void Unit_Init(Unit *unit, int tx, int ty)
     unit->target_tx = tx;
     unit->target_ty = ty;
 
-    unit->speed = 100.0f;   // Pixels per second
+    unit->speed = 150.0f;   // Pixels per second
     unit->moving = false;
 
     unit->movement.count = 0;
     unit->movement.current_index = 0;
 }
 
-void Unit_SetTarget(Unit *unit, int tx, int ty)
-{
-    // Set new destination tile
-    unit->target_tx = tx;
-    unit->target_ty = ty;
-
-    unit->moving = true;
-}
-
-void Unit_Update(Unit *unit, float dt)
+void Unit_Update(Unit *unit, Map *map, float dt)
 {
     if (!unit->moving)
         Unit_StartNextStep(unit);
@@ -64,9 +59,11 @@ void Unit_Update(Unit *unit, float dt)
             unit->wx = target.x;
             unit->wy = target.y;
 
+            Map_SetOccupied(map, unit->tx, unit->ty, false);
             // Commit tile position
             unit->tx = unit->target_tx;
             unit->ty = unit->target_ty;
+            Map_SetOccupied(map, unit->tx, unit->ty, true);
 
             unit->moving = false;
 
