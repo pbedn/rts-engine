@@ -14,6 +14,7 @@ This module:
 #include <stdlib.h>
 #include "pathfinding.h"
 #include "map.h"
+#include "unit.h"
 
 /*
 Internal node used by A*.
@@ -28,7 +29,7 @@ typedef struct
 
 	int g_cost;	 // cost from start node
 	int h_cost;  // heuristic to goal
-	int f_cost;  // g + g
+	int f_cost;  // g + h
 
 	int parent_index;
 
@@ -54,6 +55,47 @@ static int Path_Heuristic(int ax, int ay, int bx, int by)
 	return abs(ax - bx) + abs(ay - by);
 };
 
+/*
+Returns index of the opened node with the lowest f_cost.
+If none found, returns -1.
+
+Linear scan — simple and deterministic.
+*/
+static int Path_FindLowestCost(PathNode *nodes)
+{
+	int best_index = -1;
+	int best_f = 0;
+
+	for (int i = 0; i < MAP_WIDTH; ++i)
+	{
+		if (!nodes[i].opened)
+			continue;
+
+		if (nodes[i].closed)
+			continue;
+
+		if (best_index == -1 || nodes[i].f_cost < best_f)
+		{
+			best_index = i;
+			best_f = nodes[i].f_cost;
+		}
+	}
+
+	return best_index;
+}
+
+/*
+Finds a path between start and goal tile coordinates.
+
+Returns:
+    true  -> path found, out_path is filled
+    false -> no path possible
+
+Rules:
+- Does not allocate memory
+- Does not modify Map
+- Deterministic behavior
+*/
 bool Pathfinding_FindPath(
 	const Map *map,
 	int start_tx,
@@ -113,5 +155,97 @@ bool Pathfinding_FindPath(
 
 	nodes[start_index].opened = true;
 
-	return false;
+	// --- A* Main Loop ---
+	while(1)
+	{
+		int current_index = Path_FindLowestCost(nodes);
+
+		// no open nodes left - no path
+		if (current_index == -1)
+			return false;
+
+		PathNode *current = &nodes[current_index];
+
+		// if goal reached - stop search
+		if (current->tx == goal_tx && current->ty == goal_ty)
+			break;
+
+		current->opened = false;
+		current->closed = true;
+
+		// neigbour offsets (Up, right, down, Left)
+		const int offsets[4][2] = 
+		{
+			{ 0, -1 },
+			{ 1,  0 },
+			{ 0,  1 },
+			{ -1, 0 }
+		};
+
+		for (int i = 0; i < 4; ++i)
+		{
+			int nx = current->tx + offsets[i][0];
+			int ny = current->ty + offsets[i][1];
+
+			if (!Map_IsInside(map, nx, ny))	
+				continue;
+
+			if (!Map_IsWalkable(map, nx, ny))
+				continue;;
+
+			int neigbhour_index = Path_Index(nx, ny);
+			PathNode *neighbour = &nodes[neigbhour_index];
+
+			if (neighbour->closed)
+				continue;
+
+			int tentative_g = current->g_cost + 1;
+
+			if (!neighbour->opened || tentative_g < neighbour->g_cost)
+			{
+				neighbour->g_cost = tentative_g;
+				neighbour->h_cost = Path_Heuristic(nx, ny, goal_tx, goal_ty);
+				neighbour->f_cost = neighbour->g_cost + neighbour->h_cost;
+
+				neighbour->parent_index = current_index;
+				neighbour->opened = true;
+			}
+		}
+	}
+
+	// --- Path Reconstruction ---
+
+	// Goal node index
+	int goal_index = Path_Index(goal_tx, goal_ty);
+
+	int path_indices[MAX_PATH_LENGTH];
+	int path_length = 0;
+
+	int current_index = goal_index;
+
+	// Walk backwards from goal to start
+	// goal -> parent -> parent -> ... -> start
+	while (current_index != -1)
+	{
+		if (path_length >= MAX_PATH_LENGTH)
+			// Path too long for buffer
+			return false;
+
+		path_indices[path_length++] = current_index;
+		current_index = nodes[current_index].parent_index;
+	}
+
+	// Reverse order (start -> ... -> goal)
+	for (int i = 0; i < path_length; ++i)
+	{
+		int reversed_index = path_indices[path_length - 1 - i];
+		PathNode *node = &nodes[reversed_index];
+
+		out_path->tiles[i][0] = node->tx;
+		out_path->tiles[i][0] = node->tx;
+	}
+
+	out_path->length = path_length;
+
+	return true;
 }

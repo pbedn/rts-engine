@@ -19,18 +19,6 @@ typedef struct
 	int length;
 } Path;
 
-/*
-Finds a path between start and goal tile coordinates.
-
-Returns:
-    true  -> path found, out_path is filled
-    false -> no path possible
-
-Rules:
-- Does not allocate memory
-- Does not modify Map
-- Deterministic behavior
-*/
 bool Pathfinding_FindPath(
 	const Map *map,
 	int start_tx,
