@@ -251,15 +251,14 @@ Every feature must answer:
 - Who modifies it?
 - Who reads it?
 
-## 9. Folder Structure (Initial)
+## 9. Folder Structure
 
 src/
     main.c
-    game/
-    map/
-    units/
-    input/
-    render/
+    core/  # defines what the world is
+    game/  # defines how the world runs
+    input/ # defines how the world receives commands
+    render/ # defines how the world looks
 
 docs/
     architecture.md

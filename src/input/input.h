@@ -1,7 +1,7 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include "../game/game.h"
+#include "../core/gamestate.h"
 
 void Input_Process(GameState* game);
 

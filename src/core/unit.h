@@ -2,7 +2,7 @@
 #define UNIT_H
 
 #include "raylib.h"
-#include "../map/map.h"
+#include "map.h"
 
 // Maximum number of tiles a unit can have in its movement queue
 // Fixed-size to avoid dynamic allocation at this stage

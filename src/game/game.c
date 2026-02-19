@@ -1,4 +1,4 @@
-#include "game.h"
+#include "../core/gamestate.h"
 #include "../input/input.h"
 #include "../render/render.h"
 
