@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "raylib.h"
 #include "input.h"
 #include "../core/command.h"
@@ -24,6 +25,5 @@ void Input_Process(GameState *game)
         int ty = (int)tile.y;
 
         Command_MoveUnit(&game->player_unit, &game->map, tx, ty);
-
     }
 }

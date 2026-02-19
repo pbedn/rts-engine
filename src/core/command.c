@@ -1,6 +1,10 @@
+#include <stdio.h>
 #include "command.h"
 #include "map.h"
+#include "raylib.h"
 #include "unit.h"
+#include "pathfinding.h"
+
 
 //Clears the unit's movement queue.
 static void ClearMovementQueue(Unit *unit)
@@ -14,45 +18,36 @@ void Command_MoveUnit(Unit *unit, Map *map, int target_tx, int target_ty)
 {
 	ClearMovementQueue(unit);
 
-	int current_tx = unit->tx;
-	int current_ty = unit->ty;
+	// Validate target first
+    if (!Map_IsInside(map, target_tx, target_ty))
+        return;
 
-	int dx = target_tx - current_tx;
-	int dy = target_ty - current_ty;
+    if (!Map_IsWalkable(map, target_tx, target_ty))
+        return;
 
-	int step_x = (dx > 0) ? 1 : -1;
-	int step_y = (dy > 0) ? 1 : -1;
+    if (Map_IsOccupied(map, target_tx, target_ty))
+        return;
 
-	// Horizontal movement
-	while (current_tx != target_tx) {
-		current_tx += step_x;
+    Path path;
 
-		if (!Map_IsWalkable(map, current_tx, current_ty) ||
-			Map_IsOccupied(map, current_tx, current_ty))
-			break;
+    bool found = Pathfinding_FindPath(map, unit->tx, unit->ty, target_tx, target_ty, &path);
 
-		if (unit->movement.count >= MAX_PATH_LENGTH)
-			break;
+    if (!found)
+    	return;
 
-		unit->movement.tiles[unit->movement.count][0] = current_tx;
-		unit->movement.tiles[unit->movement.count][1] = current_ty;
+    // Copy path into movement queue
+    // Skip index 0 because that is the unit's current tile
 
-		unit->movement.count++;
-	}
+    for (int i = 1; i < path.length; ++i)
+    {
+    	if (unit->movement.count >= MAX_PATH_LENGTH)
+    		break;
 
-	// Vertical movement
-	while (current_ty != target_ty) {
-		current_ty += step_y;
+    	unit->movement.tiles[unit->movement.count][0] = path.tiles[i][0];
+    	unit->movement.tiles[unit->movement.count][1] = path.tiles[i][1];
 
-		if (!Map_IsWalkable(map, current_tx, current_ty))
-			break;
+    	unit->movement.count++;
+    }
 
-		if (unit->movement.count >= MAX_PATH_LENGTH)
-			break;
-
-		unit->movement.tiles[unit->movement.count][0] = current_tx;
-		unit->movement.tiles[unit->movement.count][1] = current_ty;
-
-		unit->movement.count++;
-	}
+    TraceLog(LOG_INFO, "Path length: %d", path.length);
 }

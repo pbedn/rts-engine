@@ -10,6 +10,7 @@ This module:
 - Is fully deterministic
 */
 
+#include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include "pathfinding.h"
@@ -63,25 +64,24 @@ Linear scan — simple and deterministic.
 */
 static int Path_FindLowestCost(PathNode *nodes)
 {
-	int best_index = -1;
-	int best_f = 0;
+    int best_index = -1;
 
-	for (int i = 0; i < MAP_WIDTH; ++i)
-	{
-		if (!nodes[i].opened)
-			continue;
+    for (int i = 0; i < MAP_WIDTH * MAP_HEIGHT; ++i)
+    {
+        if (!nodes[i].opened)
+            continue;
 
-		if (nodes[i].closed)
-			continue;
+        if (nodes[i].closed)
+            continue;
 
-		if (best_index == -1 || nodes[i].f_cost < best_f)
-		{
-			best_index = i;
-			best_f = nodes[i].f_cost;
-		}
-	}
+        if (best_index == -1 ||
+            nodes[i].f_cost < nodes[best_index].f_cost)
+        {
+            best_index = i;
+        }
+    }
 
-	return best_index;
+    return best_index;
 }
 
 /*
@@ -105,6 +105,13 @@ bool Pathfinding_FindPath(
 	Path *out_path
 )
 {
+	printf("-- Pathfinding start --\n");
+	printf("Start: (%d,%d)\n", start_tx, start_ty);
+	printf("Goal:  (%d,%d)\n", goal_tx, goal_ty);
+	printf("Goal walkable: %d\n", Map_IsWalkable(map, goal_tx, goal_ty));
+	printf("Goal occupied: %d\n", Map_IsOccupied(map, goal_tx, goal_ty));
+	fflush(stdout);
+
 	// Reset output path
 	out_path->length = 0;
 
@@ -139,7 +146,7 @@ bool Pathfinding_FindPath(
 			nodes[index].h_cost = 0;
 			nodes[index].f_cost = 0;
 
-			nodes[index].parent_index = 0;
+			nodes[index].parent_index = -1;
 
 			nodes[index].opened = false;
 			nodes[index].closed = false;
@@ -191,7 +198,10 @@ bool Pathfinding_FindPath(
 				continue;
 
 			if (!Map_IsWalkable(map, nx, ny))
-				continue;;
+				continue;
+
+			if (Map_IsOccupied(map, nx, ny))
+			    continue;
 
 			int neigbhour_index = Path_Index(nx, ny);
 			PathNode *neighbour = &nodes[neigbhour_index];
@@ -242,7 +252,7 @@ bool Pathfinding_FindPath(
 		PathNode *node = &nodes[reversed_index];
 
 		out_path->tiles[i][0] = node->tx;
-		out_path->tiles[i][0] = node->tx;
+		out_path->tiles[i][1] = node->ty;
 	}
 
 	out_path->length = path_length;
