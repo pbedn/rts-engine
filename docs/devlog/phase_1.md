@@ -357,5 +357,3 @@ A minimal but structurally correct RTS simulation core:
 - Deterministic-friendly.
 - Extensible.
 - Architecturally clean.
-
-This foundation enables Phase 2 (multi-tile movement and command abstraction) without refactoring core systems.
