@@ -46,9 +46,9 @@ typedef struct {
 
 } Unit;
 
-void Unit_Init(Unit* unit, int tx, int ty);
-void Unit_SetTarget(Unit* unit, int tx, int ty);
-void Unit_Update(Unit* unit, float dt);
-static bool Unit_StartNextStep(Unit* unit);
+void Unit_Init(Unit *unit, int tx, int ty);
+void Unit_SetTarget(Unit *unit, int tx, int ty);
+void Unit_Update(Unit *unit, float dt);
+static bool Unit_StartNextStep(Unit *unit);
 
 #endif

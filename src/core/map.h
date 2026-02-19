@@ -15,8 +15,8 @@ typedef struct {
 	Tile tiles[MAP_HEIGHT][MAP_WIDTH];
 } Map;
 
-void Map_Init(Map* map);
-int Map_IsInside(Map* map, int tx, int ty);
+void Map_Init(Map *map);
+int Map_IsInside(const Map *map, int tx, int ty);
 
 Vector2 Map_TileToWorld(int tx, int ty);
 Vector2 Map_WorldToTile(float wx, float wy);

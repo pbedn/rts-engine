@@ -15,7 +15,7 @@
     - Rendering
 */
 
-void Game_Init(GameState* game)
+void Game_Init(GameState *game)
 {
     Map_Init(&game->map);
 
@@ -36,13 +36,13 @@ void Game_Init(GameState* game)
     game->time = 0.0f;
 }
 
-void Game_ProcessInput(GameState* game)
+void Game_ProcessInput(GameState *game)
 {
     // Input modifies simulation state via commands
     Input_Process(game);
 }
 
-void Game_Update(GameState* game, float dt)
+void Game_Update(GameState *game, float dt)
 {
     // Advance global time
     game->time += dt;
@@ -51,7 +51,7 @@ void Game_Update(GameState* game, float dt)
     Unit_Update(&game->player_unit, dt);
 }
 
-void Game_Render(GameState* game)
+void Game_Render(GameState *game)
 {
     // Rendering is delegated to render module
     Render_Draw(game);

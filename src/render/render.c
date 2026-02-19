@@ -10,7 +10,7 @@
     It does NOT modify simulation.
 */
 
-void Render_Draw(GameState* game)
+void Render_Draw(GameState *game)
 {
     bool render_debug_show_coordinates = true;
 

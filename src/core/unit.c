@@ -11,7 +11,7 @@
     This allows smooth movement while logic remains grid-based.
 */
 
-void Unit_Init(Unit* unit, int tx, int ty)
+void Unit_Init(Unit *unit, int tx, int ty)
 {
     unit->tx = tx;
     unit->ty = ty;
@@ -31,7 +31,7 @@ void Unit_Init(Unit* unit, int tx, int ty)
     unit->movement.current_index = 0;
 }
 
-void Unit_SetTarget(Unit* unit, int tx, int ty)
+void Unit_SetTarget(Unit *unit, int tx, int ty)
 {
     // Set new destination tile
     unit->target_tx = tx;
@@ -40,7 +40,7 @@ void Unit_SetTarget(Unit* unit, int tx, int ty)
     unit->moving = true;
 }
 
-void Unit_Update(Unit* unit, float dt)
+void Unit_Update(Unit *unit, float dt)
 {
     if (!unit->moving)
         Unit_StartNextStep(unit);
@@ -88,7 +88,7 @@ void Unit_Update(Unit* unit, float dt)
 
 // Starts movement toward the next tile in the queue if available
 // Returns true if movement started, false otherwise
-static bool Unit_StartNextStep(Unit* unit)
+static bool Unit_StartNextStep(Unit *unit)
 {
     if (unit->movement.current_index >= unit->movement.count)
         return false;

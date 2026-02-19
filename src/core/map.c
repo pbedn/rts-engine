@@ -12,7 +12,7 @@
     - Handle input
 */
 
-void Map_Init(Map* map)
+void Map_Init(Map *map)
 {
     // Initialize all tiles as walkable
     for (int y = 0; y < MAP_HEIGHT; y++)
@@ -24,7 +24,7 @@ void Map_Init(Map* map)
     }
 }
 
-int Map_IsInside(Map* map, int tx, int ty)
+int Map_IsInside(const Map *map, int tx, int ty)
 {
     // map currently unused, but kept for future flexibility
     (void)map;

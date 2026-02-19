@@ -3,6 +3,6 @@
 
 #include "../core/gamestate.h"
 
-void Input_Process(GameState* game);
+void Input_Process(GameState *game);
 
 #endif

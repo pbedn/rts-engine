@@ -12,7 +12,7 @@
     It issues commands (set target).
 */
 
-void Input_Process(GameState* game)
+void Input_Process(GameState *game)
 {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
     {
