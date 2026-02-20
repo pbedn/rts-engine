@@ -1,7 +1,5 @@
 # Phase 1 – Minimal Adjacent Movement
 
-## Status: Complete
-
 Phase 1 establishes the architectural foundation of the RTS project.  
 The goal is not feature richness, but structural correctness.
 

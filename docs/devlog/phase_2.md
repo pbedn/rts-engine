@@ -320,5 +320,3 @@ It is the first step toward a true RTS simulation.
 ✔ Map enforces occupancy  
 ✔ No direct unit mutation from input  
 ✔ Clean compilation with no hacks  
-
-Phase 2 is architecturally sound.
