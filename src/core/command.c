@@ -1,10 +1,5 @@
-#include <stdio.h>
-#include "command.h"
-#include "map.h"
 #include "raylib.h"
-#include "unit.h"
-#include "pathfinding.h"
-
+#include "command.h"
 
 //Clears the unit's movement queue.
 static void ClearMovementQueue(Unit *unit)
@@ -14,23 +9,15 @@ static void ClearMovementQueue(Unit *unit)
 	unit->moving = false;
 }
 
-void Command_MoveUnit(Unit *unit, Map *map, int target_tx, int target_ty)
+void Command_MoveUnit(Unit *unit, Map *map, int target_tx, int target_ty, Path *debug_out)
 {
 	ClearMovementQueue(unit);
-
-	// Validate target first
-    if (!Map_IsInside(map, target_tx, target_ty))
-        return;
-
-    if (!Map_IsWalkable(map, target_tx, target_ty))
-        return;
-
-    if (Map_IsOccupied(map, target_tx, target_ty))
-        return;
 
     Path path;
 
     bool found = Pathfinding_FindPath(map, unit->tx, unit->ty, target_tx, target_ty, &path);
+
+    if (debug_out) *debug_out = path;  // copy even on failure; clears stale overlay
 
     if (!found)
     	return;

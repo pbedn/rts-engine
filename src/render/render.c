@@ -9,7 +9,8 @@
 #include "raylib.h"
 #include "palette.h"
 #include "render.h"
-
+#include "../game/constants.h"
+#include "../core/coords.h"
 
 static void RenderTileCoordinates(int tx, int ty, int wx, int wy, int tile_size);
 
@@ -68,26 +69,53 @@ static void RenderTileCoordinates(int tx, int ty, int wx, int wy, int tile_size)
     DrawText(buffer, text_x, text_y, font_size, PALETTE_COORD_TEXT);
 }
 
-/*
-    Converts discrete tile coordinate to pixel space.
-    This is required to separate logic from rendering.
-*/
-Vector2 Map_TileToWorld(int tx, int ty)
+void Render_DrawPathDebug(const GameState *game)
 {
-    Vector2 pos;
-    pos.x = tx * TILE_SIZE;
-    pos.y = ty * TILE_SIZE;
-    return pos;
-}
+    if (!game->debug_draw_pathfinding)
+        return;
 
-/*
-    Converts pixel space into tile coordinate.
-    Used for mouse click interpretation.
-*/
-Vector2 Map_WorldToTile(float wx, float wy)
-{
-    Vector2 tile;
-    tile.x = (int)(wx / TILE_SIZE);
-    tile.y = (int)(wy / TILE_SIZE);
-    return tile;
+    const Path *path = &game->debug_last_path;
+
+    for (int ty = 0; ty < MAP_HEIGHT; ++ty)
+    {
+        for (int tx = 0; tx < MAP_WIDTH; ++tx)
+        {
+            int index = ty * MAP_WIDTH + tx;
+
+            Vector2 pos = Map_TileToWorld(tx, ty);
+
+            if (path->debug_closed[index])
+            {
+                DrawRectangle(
+                    pos.x,
+                    pos.y,
+                    TILE_SIZE,
+                    TILE_SIZE,
+                    (Color){255, 0, 0, 80}
+                );
+            }
+
+            if (path->debug_open[index])
+            {
+                DrawRectangle(
+                    pos.x,
+                    pos.y,
+                    TILE_SIZE,
+                    TILE_SIZE,
+                    (Color){0, 0, 255, 80}
+                );
+            }
+
+            if (path->debug_in_path[index])
+            {
+                DrawRectangle(
+                    pos.x,
+                    pos.y,
+                    TILE_SIZE,
+                    TILE_SIZE,
+                    (Color){0, 255, 0, 120}
+                );
+            }
+        }
+    }
 }

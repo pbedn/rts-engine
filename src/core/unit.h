@@ -2,10 +2,8 @@
 #define UNIT_H
 
 #include "map.h"
+#include "../game/constants.h"
 
-// Maximum number of tiles a unit can have in its movement queue
-// Fixed-size to avoid dynamic allocation at this stage
-#define MAX_PATH_LENGTH 128
 
 typedef struct
 {

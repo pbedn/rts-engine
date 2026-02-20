@@ -2,10 +2,7 @@
 #define MAP_H 
 
 #include <stdbool.h>
-
-#define MAP_WIDTH 20
-#define MAP_HEIGHT 15
-#define TILE_SIZE 32
+#include "../game/constants.h"
 
 typedef struct {
 	int walkable;  // 1 - walkable, 0 - blocked

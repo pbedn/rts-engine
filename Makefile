@@ -32,3 +32,5 @@ test: $(TEST_TARGET)
 # --- Clean ---
 clean:
 	rm -f $(GAME_TARGET) $(TEST_TARGET)
+# 	find src -name "*.o" -delete
+# 	find src -name "*.d" -delete

@@ -15,7 +15,7 @@ This module:
 #include <stdlib.h>
 #include "pathfinding.h"
 #include "map.h"
-#include "unit.h"
+
 
 /*
 Internal node used by A*.
@@ -112,6 +112,14 @@ bool Pathfinding_FindPath(
 	printf("Goal occupied: %d\n", Map_IsOccupied(map, goal_tx, goal_ty));
 	fflush(stdout);
 
+	// Initialize debug arrays
+	for (int i = 0; i < MAP_NODE_COUNT; ++i)
+	{
+		out_path->debug_open[i] = false;
+		out_path->debug_closed[i] = false;
+		out_path->debug_in_path[i] = false;
+	}
+
 	// Reset output path
 	out_path->length = 0;
 
@@ -166,6 +174,7 @@ bool Pathfinding_FindPath(
 	nodes[start_index].f_cost = nodes[start_index].g_cost + nodes[start_index].h_cost;
 
 	nodes[start_index].opened = true;
+	out_path->debug_open[start_index] = true;
 
 	// --- A* Main Loop ---
 	while(1)
@@ -184,6 +193,7 @@ bool Pathfinding_FindPath(
 
 		current->opened = false;
 		current->closed = true;
+		out_path->debug_closed[current_index] = true;
 
 		// neigbour offsets (Up, right, down, Left)
 		const int offsets[4][2] = 
@@ -268,6 +278,8 @@ bool Pathfinding_FindPath(
 
 		out_path->tiles[i][0] = node->tx;
 		out_path->tiles[i][1] = node->ty;
+
+		out_path->debug_in_path[reversed_index] = true;
 	}
 
 	out_path->length = path_length;

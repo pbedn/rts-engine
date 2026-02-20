@@ -1,8 +1,8 @@
-#include <stdio.h>
 #include "raylib.h"
 #include "input.h"
 #include "../core/command.h"
-#include "../render/render.h"
+#include "../core/gamestate.h"
+#include "../core/coords.h"
 
 
 /*
@@ -20,11 +20,15 @@ void Input_Process(GameState *game)
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
     {
         Vector2 mouse = GetMousePosition();
-        Vector2 tile  = Map_WorldToTile(mouse.x, mouse.y);
+        Vector2 tile = Map_WorldToTile(mouse.x, mouse.y);
 
-        int tx = (int)tile.x;
-        int ty = (int)tile.y;
+        game->input.has_move_order = true;
+        game->input.move_tx = (int)tile.x;
+        game->input.move_ty = (int)tile.y;
+    }
 
-        Command_MoveUnit(&game->player_unit, &game->map, tx, ty);
+    if (IsKeyPressed(KEY_F1))
+    {
+        game->debug_draw_pathfinding = !game->debug_draw_pathfinding;
     }
 }
