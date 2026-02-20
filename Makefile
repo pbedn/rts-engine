@@ -1,12 +1,34 @@
 CC = gcc
-CFLAGS = -Iinclude
+CFLAGS = -Wall -Wextra -std=c11 -Iinclude
 LDFLAGS = -Llib -lraylib -lm -ldl -lpthread -lGL -lrt -lX11
 
 SRC = $(wildcard src/**/*.c) src/*.c
-OUT = build/rts
 
-all:
-	$(CC) $(SRC) $(CFLAGS) $(LDFLAGS) -o $(OUT)
+TEST_SRC = \
+	tests/test_pathfinding.c
 
+GAME_TARGET = build/rts
+TEST_TARGET = test_runner
+
+# --- Default target ---
+all: $(GAME_TARGET)
+
+# --- Game build ---
+$(GAME_TARGET): $(SRC)
+	$(CC) $(CFLAGS) $(SRC) $(LDFLAGS) -o $(GAME_TARGET)
+
+# --- Run game ---
+run: $(GAME_TARGET)
+	./$(GAME_TARGET)
+
+# --- Test build ---
+$(TEST_TARGET): $(TEST_SRC)
+	$(CC) $(CFLAGS) $(TEST_SRC) -o $(TEST_TARGET)
+
+# --- Run tests ---
+test: $(TEST_TARGET)
+	./$(TEST_TARGET)
+
+# --- Clean ---
 clean:
-	rm -f $(OUT)
+	rm -f $(GAME_TARGET) $(TEST_TARGET)

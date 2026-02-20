@@ -1,8 +1,3 @@
-#include "unit.h"
-#include "map.h"
-#include <math.h>
-#include <stdbool.h>
-
 /*
     Unit is a small state machine.
 
@@ -12,6 +7,14 @@
 
     This allows smooth movement while logic remains grid-based.
 */
+
+#include <stdbool.h>
+#include <math.h>
+#include "unit.h"
+#include "map.h"
+
+static bool Unit_StartNextStep(Unit *unit);
+
 
 void Unit_Init(Unit *unit, Map *map, int tx, int ty)
 {
@@ -41,10 +44,12 @@ void Unit_Update(Unit *unit, Map *map, float dt)
         Unit_StartNextStep(unit);
 
     // if moving, interpolate toward target tile
-    Vector2 target = Map_TileToWorld(unit->target_tx, unit->target_ty);
+    float target_wx = unit->target_tx * TILE_SIZE;
+    float target_wy = unit->target_ty * TILE_SIZE;
 
-    float dx = target.x - unit->wx;
-    float dy = target.y - unit->wy;
+
+    float dx = target_wx - unit->wx;
+    float dy = target_wy - unit->wy;
 
     float dist = sqrtf(dx * dx + dy * dy);
 
@@ -56,8 +61,8 @@ void Unit_Update(Unit *unit, Map *map, float dt)
         if (step >= dist)
         {
             // Snap to target
-            unit->wx = target.x;
-            unit->wy = target.y;
+            unit->wx = target_wx;
+            unit->wy = target_wy;
 
             Map_SetOccupied(map, unit->tx, unit->ty, false);
             // Commit tile position

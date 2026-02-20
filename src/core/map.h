@@ -1,7 +1,7 @@
 #ifndef MAP_H
 #define MAP_H 
 
-#include "raylib.h"
+#include <stdbool.h>
 
 #define MAP_WIDTH 20
 #define MAP_HEIGHT 15
@@ -17,10 +17,6 @@ typedef struct {
 } Map;
 
 void Map_Init(Map *map);
-
-
-Vector2 Map_TileToWorld(int tx, int ty);
-Vector2 Map_WorldToTile(float wx, float wy);
 
 // Returns true if tile coordinates are inside map bounds
 bool Map_IsInside(const Map *map, int tx, int ty);

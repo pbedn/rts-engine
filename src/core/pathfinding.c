@@ -127,7 +127,12 @@ bool Pathfinding_FindPath(
 
 	// special case: already at goal
 	if (start_tx == goal_tx && start_ty == goal_ty)
-		return true;
+	{
+	    out_path->tiles[0][0] = start_tx;
+	    out_path->tiles[0][1] = start_ty;
+	    out_path->length = 1;
+	    return true;
+	}
 
 	// create node grid
 	PathNode nodes[MAP_WIDTH * MAP_HEIGHT];
@@ -200,6 +205,16 @@ bool Pathfinding_FindPath(
 			if (!Map_IsWalkable(map, nx, ny))
 				continue;
 
+			/*
+			Design Choice
+
+			Currently:
+			* Goal tile may be occupied
+			* But it will never step into it
+			* So A* will fail naturally
+			Should pathfinding itself reject occupied goal early?
+			Or should that remain command-layer policy?
+			*/
 			if (Map_IsOccupied(map, nx, ny))
 			    continue;
 

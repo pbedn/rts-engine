@@ -1,7 +1,6 @@
 #ifndef UNIT_H
 #define UNIT_H
 
-#include "raylib.h"
 #include "map.h"
 
 // Maximum number of tiles a unit can have in its movement queue
@@ -48,6 +47,5 @@ typedef struct {
 
 void Unit_Init(Unit *unit, Map *map, int tx, int ty);
 void Unit_Update(Unit *unit, Map *map, float dt);
-static bool Unit_StartNextStep(Unit *unit);
 
 #endif

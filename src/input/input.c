@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include "input.h"
 #include "../core/command.h"
+#include "../render/render.h"
 
 
 /*

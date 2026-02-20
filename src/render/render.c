@@ -1,14 +1,18 @@
-#include "render.h"
-#include "raylib.h"
-#include "palette.h"
-#include <stdio.h>
-
 /*
     Render module visualizes current simulation state.
 
     It reads from GameState.
     It does NOT modify simulation.
 */
+
+#include <stdio.h>
+#include "raylib.h"
+#include "palette.h"
+#include "render.h"
+
+
+static void RenderTileCoordinates(int tx, int ty, int wx, int wy, int tile_size);
+
 
 void Render_Draw(GameState *game)
 {
@@ -62,4 +66,28 @@ static void RenderTileCoordinates(int tx, int ty, int wx, int wy, int tile_size)
     int text_y = wy + (tile_size - font_size) / 2;
 
     DrawText(buffer, text_x, text_y, font_size, PALETTE_COORD_TEXT);
+}
+
+/*
+    Converts discrete tile coordinate to pixel space.
+    This is required to separate logic from rendering.
+*/
+Vector2 Map_TileToWorld(int tx, int ty)
+{
+    Vector2 pos;
+    pos.x = tx * TILE_SIZE;
+    pos.y = ty * TILE_SIZE;
+    return pos;
+}
+
+/*
+    Converts pixel space into tile coordinate.
+    Used for mouse click interpretation.
+*/
+Vector2 Map_WorldToTile(float wx, float wy)
+{
+    Vector2 tile;
+    tile.x = (int)(wx / TILE_SIZE);
+    tile.y = (int)(wy / TILE_SIZE);
+    return tile;
 }
